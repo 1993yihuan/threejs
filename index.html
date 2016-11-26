@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- 移动相机的位置-->
+        <meta charset="UTF-8">
+        <title>WebGL</title>
+        <script src="three.js"></script>
+        <script src="stats.js"></script>
+        <script src="tween.js"></script>
+        <script src="jquery.js"></script>
+        <style type="text/css">
+            div#canvas-frame {
+                border: none;
+                cursor: pointer;
+                width: 100%;
+                height: 600px;
+                background-color: #EEEEEE;
+            }
+
+        </style>
+        <script>
+            /*
+            * 围绕某个 x,y,z轴测试
+            */
+            
+            
+            var renderer;
+            var stats;
+            var group = new THREE.Group();
+            function initThree() {
+                width = document.getElementById('canvas-frame').clientWidth;
+                height = document.getElementById('canvas-frame').clientHeight;
+                renderer = new THREE.WebGLRenderer({
+                    antialias : true
+                });
+                renderer.setSize(width, height);
+                document.getElementById('canvas-frame').appendChild(renderer.domElement);
+                renderer.setClearColor(0xFFFFFF, 1.0);
+
+                stats = new Stats();
+                stats.domElement.style.position = 'absolute';
+                stats.domElement.style.left = '0px';
+                stats.domElement.style.top = '0px';
+                document.getElementById('canvas-frame').appendChild(stats.domElement);
+            }
+
+            var camera;
+            function initCamera() {
+                camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
+                camera.position.x = 200;
+                camera.position.y = 400;
+                camera.position.z = 2000;
+                camera.up.x = 0;
+                camera.up.y = 1;
+                camera.up.z = 0;
+                camera.lookAt({
+                    x : 0,
+                    y : 0,
+                    z : 0
+                });
+            }
+
+            var scene;
+            function initScene() {
+                scene = new THREE.Scene();
+            }
+
+            var light;
+            function initLight() {
+                light = new THREE.AmbientLight(0xFF0000);
+                light.position.set(100, 100, 200);
+                scene.add(light);
+
+            }
+
+            var cube;
+            var mesh;
+            function initObject() {
+               
+                var geometry = new THREE.BoxGeometry( 100, 100, 100 );
+                
+                for ( var i = 0; i < geometry.faces.length; i += 2 ) {
+
+                    var hex = Math.random() * 0xffffff;
+                    geometry.faces[ i ].color.setHex( hex );
+                    geometry.faces[ i + 1 ].color.setHex( hex );
+
+                }
+                
+                var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors} );
+                mesh = new THREE.Mesh( geometry,material);
+                mesh.position = new THREE.Vector3(0,0,0);
+                group.add(mesh);
+                
+                
+            }
+            
+            function initGrid(){
+                var helper = new THREE.GridHelper( 1000, 50 );
+//                helper.setColors( 0x0000ff, 0x808080 );
+                group.add( helper );
+            }
+            
+            function threeStart() {
+                initThree();
+                initCamera();
+                initScene();
+                initLight();
+
+
+                initObject();
+                initGrid();
+                scene.add(group);
+                animation();
+
+            }
+
+            // 帧循环、游戏循环
+            function animation()
+            {
+                mesh.rotation.y +=0.01;
+                renderer.render(scene, camera);
+                requestAnimationFrame(animation);
+                stats.update();
+            }
+
+            $(function(){
+                var m_start_x = null;
+                var m_start_y = null;
+                $(document).on('mousedown',function(e){
+                    m_start_x = e.pageX;
+                    m_start_y = e.pageY;
+                    $(document).on('mousemove',function(e){
+                        var len_x = e.pageX-m_start_x;
+                        var len_y = e.pageY-m_start_y;
+                        
+                        var camera_x = camera.position.x;
+                        var camera_y = camera.position.y;
+                        var camera_z = camera.position.z;
+                        
+                        camera.position.x = camera_x+(-len_x/13);
+                        camera.position.y = camera_y+(-len_y/13);
+                        camera.position.z = camera_z+(-len_y/13);
+                        renderer.render(scene, camera);
+                    }).on('mouseup',function(e){
+                        $(document).off('mousemove mouseup');
+                    })
+                })
+                
+            })
+        </script>
+    </head>
+
+    <body onload="threeStart();">
+        <div style="margin-left:150px;">
+        </div>
+        <div id="canvas-frame"></div>
+    </body>
+</html>
