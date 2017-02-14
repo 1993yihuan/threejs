@@ -1,4 +1,4 @@
-#threejs可视化
+#threejs三维场景
 >测试threejs相关API，同时里面也有一些好玩demo
 
 ##以下是关于一些文件夹的说明
