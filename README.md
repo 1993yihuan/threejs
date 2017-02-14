@@ -53,5 +53,5 @@ var stats = initStats();
 ```javascript
 gui.add(controls, 'addCube');
 ```
-![](http://olcrntw9l.bkt.clouddn.com/CA444D80-B7EC-4764-81C2-14478D2AC7FF.png)
+![](http://olcrntw9l.bkt.clouddn.com/QQ20170214-154408.gif)
 *Yihuan He email:yihuan1993@qq.com*
